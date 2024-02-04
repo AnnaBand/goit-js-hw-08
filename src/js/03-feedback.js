@@ -13,7 +13,8 @@ let formErrors = [];
 
 const formState = JSON.parse(localStorage.getItem(localStorageKey)) || {
   email: '',
-  message: ''};
+  message: ''
+};
 form.elements.email.value = formState.email;
 form.elements.message.value = formState.message;
 
@@ -27,10 +28,10 @@ form.addEventListener('submit', event => {
   event.preventDefault();
   formErrors.length = 0;
   if (formState.email.trim().length == 0) {
-    formErrors.push("Uzupełnij pole 'Email'!");
+    formErrors.push("Please fill in the 'Email' field!");
   }
   if (formState.message.trim().length == 0) {
-    formErrors.push("Uzupełnij pole 'Message'!");
+    formErrors.push("Please fill in the 'Message' field!");
   }
   if (!formErrors.length) {
     console.log(formState);
@@ -41,7 +42,7 @@ form.addEventListener('submit', event => {
     formMessage.innerHTML = ``;
   } else {
     formMessage.innerHTML = `
-    <h4>Przed wysłaniem proszę poprawić błędy:</h4>
+    <h4>Please correct the following errors before submitting:</h4>
             <ul>
                 ${formErrors.map(el => `<li>${el}</li>`).join('')}
             </ul>
