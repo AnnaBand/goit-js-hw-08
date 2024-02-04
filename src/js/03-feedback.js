@@ -42,8 +42,8 @@ form.addEventListener('submit', event => {
     formMessage.innerHTML = ``;
   } else {
     formMessage.innerHTML = `<h4>Please correct the following errors before submitting:</h4>
-            <ul>
-                ${formErrors.map(el => `<li>${el}</li>`).join('')}
-            </ul>`;
+        <ul>
+            ${formErrors.map(el => `<li>${el}</li>`).join('')}
+        </ul>`;
   }
 });
