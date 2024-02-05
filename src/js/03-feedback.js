@@ -3,47 +3,52 @@ import throttle from 'lodash.throttle';
 const form = document.querySelector('.feedback-form');
 const localStorageKey = 'feedback-form-state';
 
-const formDiv = document.createElement("div");
-formDiv.className = 'form-message';
-form.append(formDiv);
+const formMessage = document.createElement('div');
+formMessage.className = 'form-message';
+formMessage.style.color = 'red';
+form.append(formMessage);
 
-const formMessage = form.querySelector('.form-message');
-formMessage.style.color = "red";
 let formErrors = [];
 
 const formState = JSON.parse(localStorage.getItem(localStorageKey)) || {
   email: '',
   message: ''
 };
+
+const updateFormState = (element) => {
+  formState[element.name] = element.value;
+  localStorage.setItem(localStorageKey, JSON.stringify(formState));
+};
+
 form.elements.email.value = formState.email;
 form.elements.message.value = formState.message;
 
-form.addEventListener('input', throttle(({target}) => {
-  const element = target.name;
-  formState[element] = target.value;
-  localStorage.setItem(localStorageKey, JSON.stringify(formState));
-}, 500));
+form.addEventListener(
+  'input',
+  throttle(({ target }) => {
+    updateFormState(target);
+  }, 500)
+);
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', (event) => {
   event.preventDefault();
-  formErrors.length = 0;
-  if (formState.email.trim().length == 0) {
-    formErrors.push("Please fill in the 'Email' field!");
-  }
-  if (formState.message.trim().length == 0) {
-    formErrors.push("Please fill in the 'Message' field!");
-  }
-  if (!formErrors.length) {
+
+  formErrors = [];
+  ['email', 'message'].forEach((field) => {
+    if (formState[field].trim().length === 0) {
+      formErrors.push(`Please fill in the '${field.charAt(0).toUpperCase() + field.slice(1)}' field!`);
+    }
+  });
+
+  if (formErrors.length === 0) {
     console.log(formState);
     localStorage.removeItem(localStorageKey);
-    formState.email = '';
-    formState.message = '';
     form.reset();
-    formMessage.innerHTML = ``;
+    formMessage.innerHTML = '';
   } else {
     formMessage.innerHTML = `<h4>Please correct the following errors before submitting:</h4>
         <ul>
-            ${formErrors.map(el => `<li>${el}</li>`).join('')}
+            ${formErrors.map((error) => `<li>${error}</li>`).join('')}
         </ul>`;
   }
 });
